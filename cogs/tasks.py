@@ -62,14 +62,14 @@ class Tasks(commands.Cog):
                 guild = disc_channel.guild
                 default_role = guild.default_role
                 await disc_channel.set_permissions(default_role, send_messages=False)
-                await disc_channel.send("**Channel Locked for 20 mins! Solve the problem first.**")
+                await disc_channel.send("**Channel Locked for 20 mins! Solve the problem first.**",delete_after=1200)
 
             # Wait 20 mins
                 await asyncio.sleep(1200)
 
             # Unlock
                 await disc_channel.set_permissions(default_role, send_messages=True)
-                await disc_channel.send("**Channel Unlocked! Discuss all your doubts.**")
+                await disc_channel.send("**Channel Unlocked! Discuss all your doubts.**",delete_after=600)
             
             except Exception as e:
                 print(f"Error in locking/unlocking channel: {e}")

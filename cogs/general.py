@@ -104,8 +104,8 @@ class General(commands.Cog):
     async def help(self, ctx):
         await ctx.message.delete()
         # Get Channel IDs from .env to make clickable links
-        reg_channel = os.getenv("REGISTRATION_CHANNEL_ID")
-        sub_channel = os.getenv("SUBMISSION_CHANNEL_ID")
+        reg_channel = os.getenv("REGISTERATION_CHANNEL_ID")
+        sub_channel = os.getenv("SUBMISSIONS_CHANNEL_ID")
         discuss_channel = os.getenv("DISCUSSION_CHANNEL_ID")
 
         embed = discord.Embed(title="CIPHERS Bot Guide", description="Here is where to use each command:", color=discord.Color.green())
@@ -120,7 +120,7 @@ class General(commands.Cog):
         # 2. Submission
         embed.add_field(
             name="Verify Solution", 
-            value=f"`!solved` (or `!submit`)\n**Where:** <#{sub_channel}>", 
+            value=f"`!solved`\n**Where:** <#{sub_channel}>", 
             inline=False
         )
         

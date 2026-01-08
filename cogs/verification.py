@@ -58,15 +58,18 @@ class Verification(commands.Cog):
                     async with session.post("https://leetcode.com/graphql", json=payload, headers=headers) as resp:
                         if resp.status != 200:
                             await processing_msg.edit(content="LeetCode is busy (429). Try again in 5 mins.")
+                            await processing_msg.delete(delay=10)
                             return
                         data = await resp.json()
                         if "data" not in data or "recentSubmissionList" not in data["data"]:
                             await processing_msg.edit(content="User not found or hidden history.")
+                            await processing_msg.delete(delay=10)
                             return
                         recent_subs = data["data"]["recentSubmissionList"]
             except Exception as e:
                 print(f"API ERROR: {e}")
                 await processing_msg.edit(content="Network Error. The Bot is tired.")
+                await processing_msg.delete(delay=10)
                 return
 
         # 4. MATCHING LOGIC
@@ -99,11 +102,11 @@ class Verification(commands.Cog):
 
         if new_solves:
             await self.bot.db.execute('UPDATE users SET score = score + $1 WHERE user_id = $2', points_added, ctx.author.id)
-            await ctx.send(f"**VERIFIED!**\nYou solved: **{', '.join(new_solves)}**\n **+{points_added} Points** added to your score!")
+            await ctx.send(f"**VERIFIED!**\nYou solved: **{', '.join(new_solves)}**\n **+{points_added} Points** added to your score!",delete_after=40)
         elif points_added == 0 and any(sub['title'] in target_titles for sub in recent_subs):
             await ctx.send(f"You already claimed points for today's questions!",delete_after=20)
         else:
-            await ctx.send(f"**No fresh solution found.**\nMake sure you clicked 'Submit' **today**.")
+            await ctx.send(f"**No fresh solution found.**\nMake sure you clicked 'Submit' **today**.",delete_after=20)
 
 async def setup(bot):
     await bot.add_cog(Verification(bot))

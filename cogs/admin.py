@@ -5,10 +5,10 @@ import datetime
 from discord.ext import commands,tasks
 
 
-# 1. DEFINE INDIAN TIMEZONE (IST) - Exactly like your other file
+# DEFINE INDIAN TIMEZONE (IST) - Exactly like your other file
 IST = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 
-# 2. SET LEADERBOARD TIME (e.g., 9:00 PM)
+# SET LEADERBOARD TIME (e.g., 9:00 PM)
 LEADERBOARD_TIME = datetime.time(hour=21, minute=0, tzinfo=IST)
 
 class Admin(commands.Cog):
@@ -22,7 +22,7 @@ class Admin(commands.Cog):
 
     @tasks.loop(time=LEADERBOARD_TIME)
     async def daily_leaderboard_task(self):
-        # 1. Get Channel ID from .env
+        print("IT IS 9:00 PM! Posting Daily Leaderboard...")
         CHANNEL_ID = os.getenv("SUBMISSIONS_CHANNEL_ID")
         
         if not CHANNEL_ID:
@@ -33,7 +33,7 @@ class Admin(commands.Cog):
         if not channel:
             return
 
-        # 2. Fetch Top 10
+        # Fetch Top 10
         users = await self.bot.db.fetch('''
             SELECT username, score FROM users 
             ORDER BY score DESC LIMIT 10
@@ -42,15 +42,21 @@ class Admin(commands.Cog):
         if not users:
             return # No users registered yet
 
-        # 3. Build the Display
-        embed = discord.Embed(title="🏆 Daily Leaderboard", color=0xFFD700)
-        description = ""
-        
+        # Build the Display
+        board_text = "RANK  USER             SCORE\n"
+        board_text += "----------------------------\n"
+
         for rank, user in enumerate(users, 1):
-            medal = "🥇" if rank == 1 else "🥈" if rank == 2 else "🥉" if rank == 3 else f"#{rank}"
-            description += f"**{medal} {user['username']}** — {user['score']} pts\n"
+            # Clean the name (cut it if too long)
+            name = user['username'][:15]
+            score = user['score']
         
-        embed.description = description
+        # Format: Rank (2 digits), Name (15 chars), Score (5 chars)
+        board_text += f"#{rank:02d}   {name:<15}  {score:>4}\n"
+
+        # Send as an Embed with a Code Block
+        embed = discord.Embed(title="🏆 Daily Standings", color=0x2ECC71) # Green color 
+        embed.description = f"```\n{board_text}\n```" # ``` makes it monospaced
         embed.set_footer(text="Updates daily at 9:00 PM IST")
         
         await channel.send(embed=embed)
@@ -93,6 +99,10 @@ class Admin(commands.Cog):
 
     @commands.command()
     async def force_today(self, ctx, *, title):
+        try: 
+            await ctx.message.delete()
+        except: 
+            pass
         result = await self.bot.db.execute('''
             UPDATE questions SET posted_date = CURRENT_DATE, is_posted = TRUE WHERE title = $1
         ''', title)
@@ -137,7 +147,7 @@ class Admin(commands.Cog):
             me = await self.bot.fetch_user(ADMIN_USER_ID)
             error_msg = f"**CRITICAL BOT ERROR** \nCommand: `{ctx.message.content}`\nUser: {ctx.author}\nError: ```{str(error)}```"
             print(error_msg)
-            # await me.send(error_msg) # Uncomment this if you want DMs for crashes
+            await me.send(error_msg) # Uncomment this if you want DMs for crashes
         except:
             print(f"Could not DM Admin. Error: {error}")
         
