@@ -50,9 +50,8 @@ class Admin(commands.Cog):
             # Clean the name (cut it if too long)
             name = user['username'][:15]
             score = user['score']
-        
-        # Format: Rank (2 digits), Name (15 chars), Score (5 chars)
-        board_text += f"#{rank:02d}   {name:<15}  {score:>4}\n"
+            # Format: Rank (2 digits), Name (15 chars), Score (5 chars)
+            board_text += f"#{rank:02d}   {name:<15}  {score:>4}\n"
 
         # Send as an Embed with a Code Block
         embed = discord.Embed(title="🏆 Daily Standings", color=0x2ECC71) # Green color 
