@@ -44,7 +44,7 @@ class General(commands.Cog):
     async def profile(self, ctx, member: discord.Member = None):
         await ctx.message.delete()
         target = member or ctx.author
-        discussion_channel_id = int(os.getenv("DISCUSSION_CHANNEL_ID"))
+        discussion_channel_id = int(os.getenv("SUBMISSIONS_CHANNEL_ID"))
         if ctx.channel.id != discussion_channel_id:
             # Delete their wrong message instantly
             await ctx.message.delete()
@@ -70,7 +70,7 @@ class General(commands.Cog):
     @commands.command()
     async def leaderboard(self, ctx):
         await ctx.message.delete()
-        discussion_channel_id = int(os.getenv("DISCUSSION_CHANNEL_ID"))
+        discussion_channel_id = int(os.getenv("SUBMISSIONS_CHANNEL_ID"))
         if ctx.channel.id != discussion_channel_id:
             # Delete their wrong message instantly
             await ctx.message.delete()
@@ -97,41 +97,32 @@ class General(commands.Cog):
         msg += "```\n"
         await ctx.send(msg)
 
-    
-
-
     @commands.command()
     async def help(self, ctx):
         await ctx.message.delete()
-        # Get Channel IDs from .env to make clickable links
-        reg_channel = os.getenv("REGISTERATION_CHANNEL_ID")
-        sub_channel = os.getenv("SUBMISSIONS_CHANNEL_ID")
-        discuss_channel = os.getenv("DISCUSSION_CHANNEL_ID")
+        commands_channel_id = os.getenv("SUBMISSIONS_CHANNEL_ID")
 
-        embed = discord.Embed(title="CIPHERS Bot Guide", description="Here is where to use each command:", color=discord.Color.green())
-        
-        # 1. Registration
+        embed = discord.Embed(
+            title="🤖 Ciphers Bot Controls",
+            description=f"**Type these commands in <#{commands_channel_id}>**",
+            color=discord.Color.green()
+        )
+
+        # A clean, compact list of commands
         embed.add_field(
-            name="Registration", 
-            value=f"`!register <leetcode_link>`\n**Where:** <#{reg_channel}>", 
+            name="Available Commands",
+            value=(
+                "`!register <link>` — Link your LeetCode profile\n"
+                "`!solved` — Force verify latest submission\n"
+                "`!profile` — View streak & score\n"
+                "`!leaderboard` — View batch standings\n"
+                "`!help` — Show this menu"
+            ),
             inline=False
         )
-        
-        # 2. Submission
-        embed.add_field(
-            name="Verify Solution", 
-            value=f"`!solved`\n**Where:** <#{sub_channel}>", 
-            inline=False
-        )
-        
-        # 3. Stats & Profile
-        embed.add_field(
-            name="Stats", 
-            value=f"`!leaderboard` & `!profile`\n**Where:** <#{discuss_channel}>", 
-            inline=False
-        )
-        
+
         embed.set_footer(text="Keep grinding! ")
+        
         await ctx.send(embed=embed)
 async def setup(bot):
     await bot.add_cog(General(bot))

@@ -23,10 +23,10 @@ class Admin(commands.Cog):
     @tasks.loop(time=LEADERBOARD_TIME)
     async def daily_leaderboard_task(self):
         print("IT IS 9:00 PM! Posting Daily Leaderboard...")
-        CHANNEL_ID = os.getenv("SUBMISSIONS_CHANNEL_ID")
+        CHANNEL_ID = os.getenv("LEADERBOARD_CHANNEL_ID")
         
         if not CHANNEL_ID:
-            print("Error: SUBMISSIONS_CHANNEL_ID not found in .env")
+            print("Error: LEADERBOARD_CHANNEL_ID not found in .env")
             return
 
         channel = self.bot.get_channel(int(CHANNEL_ID))
