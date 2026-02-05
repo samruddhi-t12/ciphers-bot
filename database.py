@@ -35,4 +35,6 @@ class Database:
     
 
     async def close(self):
-        await self.pool.close()
+        if self.pool:  # <--- Safety Check
+            await self.pool.close()
+        
