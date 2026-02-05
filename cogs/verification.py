@@ -75,7 +75,7 @@ class Verification(commands.Cog):
         # 4. MATCHING LOGIC
         new_solves = []
         points_added = 0
-        today_start = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.datetime.now(IST).replace(hour=0, minute=0, second=0, microsecond=0)
         today_timestamp = today_start.timestamp()
 
         for sub in recent_subs:

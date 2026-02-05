@@ -42,7 +42,6 @@ class General(commands.Cog):
 
     @commands.command()
     async def profile(self, ctx, member: discord.Member = None):
-        await ctx.message.delete()
         target = member or ctx.author
         discussion_channel_id = int(os.getenv("SUBMISSIONS_CHANNEL_ID"))
         if ctx.channel.id != discussion_channel_id:
@@ -69,7 +68,7 @@ class General(commands.Cog):
 
     @commands.command()
     async def leaderboard(self, ctx):
-        await ctx.message.delete()
+        
         discussion_channel_id = int(os.getenv("SUBMISSIONS_CHANNEL_ID"))
         if ctx.channel.id != discussion_channel_id:
             # Delete their wrong message instantly
@@ -99,8 +98,15 @@ class General(commands.Cog):
 
     @commands.command()
     async def help(self, ctx):
-        await ctx.message.delete()
+        
         commands_channel_id = os.getenv("SUBMISSIONS_CHANNEL_ID")
+        if commands_channel_id and ctx.channel.id != int(commands_channel_id):
+            await ctx.message.delete()
+            await ctx.send(f"Please use <#{commands_channel_id}> to see commands!", delete_after=10)
+            return
+
+        # 3. If we are in the right channel, proceed
+        await ctx.message.delete()
 
         embed = discord.Embed(
             title="🤖 Ciphers Bot Controls",

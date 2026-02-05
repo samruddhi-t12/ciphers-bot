@@ -39,16 +39,28 @@ class CiphersBot(commands.Bot):
         await super().close()
         print("SYSTEM SHUTDOWN: Database disconnected.")
 
+
 # RUNNER
 if __name__ == "__main__": 
     token = os.getenv("DISCORD_TOKEN")
+    
     if not token:
         print("CRITICAL ERROR: DISCORD_TOKEN not found in .env file")
     else:
         keep_alive()
+        
         try:
             bot = CiphersBot()
             bot.run(token)
         except KeyboardInterrupt:
-            # This catches Ctrl+C nicely
+            # Handle manual shutdown (Ctrl+C)
             pass
+        except Exception as e:
+            # If the bot crashes, print the error and WAIT.
+            # This prevents Render from restarting us too fast and getting us banned.
+            print(f"CRITICAL STARTUP ERROR: {e}")
+            print("Sleeping for 60 seconds before letting Render restart...")
+            import time
+            time.sleep(60) 
+            # Now we let it crash, but we slowed it down.
+            raise e
