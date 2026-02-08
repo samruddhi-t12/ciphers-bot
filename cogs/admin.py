@@ -8,8 +8,8 @@ from discord.ext import commands,tasks
 # DEFINE INDIAN TIMEZONE (IST) - Exactly like your other file
 IST = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 
-# SET LEADERBOARD TIME (e.g., 9:00 PM)
-LEADERBOARD_TIME = datetime.time(hour=21, minute=0, tzinfo=IST)
+# SET LEADERBOARD TIME 
+LEADERBOARD_TIME = datetime.time(hour=23, minute=0, tzinfo=IST)
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -22,7 +22,7 @@ class Admin(commands.Cog):
 
     @tasks.loop(time=LEADERBOARD_TIME)
     async def daily_leaderboard_task(self):
-        print("IT IS 9:00 PM! Posting Daily Leaderboard...")
+        print("IT IS 11:00 PM! Posting Daily Leaderboard...")
         CHANNEL_ID = os.getenv("LEADERBOARD_CHANNEL_ID")
         
         if not CHANNEL_ID:
@@ -56,7 +56,7 @@ class Admin(commands.Cog):
         # Send as an Embed with a Code Block
         embed = discord.Embed(title="🏆 Daily Standings", color=0x2ECC71) # Green color 
         embed.description = f"```\n{board_text}\n```" # ``` makes it monospaced
-        embed.set_footer(text="Updates daily at 9:00 PM IST")
+        embed.set_footer(text="1 Hour Left! Solve before Midnight to save your streak! ⏳")
         
         await channel.send(embed=embed)
 
